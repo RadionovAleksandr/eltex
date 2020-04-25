@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eltex</title>
+</head>
+
+<body>
+    <h1>Eltex test</h1>
+    <h2>Task:</h2>
+    <ol>
+        <li>Программа запрашивает у пользователя число N. Затем генерирует строку из случайных символов длиной N. <br>Случайные символы в данном случае - это любые символы латинского алфавита (A-Z) и цифры (0-9). Сгенерированная строка выводится на экран.
+
+        </li>
+        <li>Далее программа запрашивает у пользователя один символ. Заменяет все буквы в сгенерированной на шаге 1 строке на этот символ.
+        </li>
+        <li>Запрашивает второй символ. Заменяет все цифры в сгенерированной на шаге 2 строке на второй символ. Выводит получившуюся строку.
+        </li>
+        <li>Выводит количество повторов первого символа и количество повторов второго символа.</ol>
+    <li><i>Замечание: замену реализовать через цикл for, не через replace или подобные функции.</i></li>
+    </ol>
+    <div class="screen">
+        произвольная строка
+    </div>
+
+    <template id="first-screen">
+        <div class="first-scrin__wrap">
+            <input class="first-scrin__user-input" type="number" min="0" placeholder="4">
+            <button class="first-scrin__btn btn">сгенерирвоать строку</button>
+        </div>
+    </template>
+
+    <template id="second-screen">
+        <div class="second-scrin__wrap">
+            <input class="second-scrin__user-input" type="text" maxLength="1" placeholder="f">
+            <button class="second-scrin__btn btn">Заменить значение</button>
+        </div>
+    </template>
+
+    <template id="fourth-screen">
+        <div class="second-scrin__wrap">
+            <button class="btn"> вывести количество повторов символов</button>
+            Количество повторов: <br>
+            <span class="first-value"></span>;<br> 
+            <span class="second-value"></span>.
+        </div>
+    </template>
+
+</body>
+<script type="text/javascript">
+    let userScreen = document.querySelector('.screen');
+    let body = document.querySelector('body');
+    let tmpl1 = document.querySelector('#first-scrin');
+    let tmpl2 = document.querySelector('#second-scrin');
+
+
+    let state = {
+        step: 0,
+        counters: [{}, {}],
+    }
+    let templats = {
+        'genString': document.querySelector('#first-screen'),
+        'replaceString': document.querySelector('#second-screen'),
+        'result': document.querySelector('#fourth-screen'),
+    }
+
+    body.onload = function() {
+        checkStep();
+    }
+
+
+    function checkStep() {
+        console.log('step= ' + state.step);
+        switch (true) {
+            case state.step === 0:
+                const first = new App(templats.genString, showString);
+                first.render();
+                break;
+
+            case state.step === 1:
+                const second = new App(templats.replaceString, replaceLetter);
+                second.render();
+                break;
+
+            case state.step === 2:
+                const third = new App(templats.replaceString, replaceNumber);
+                third.render();
+                break;
+
+            case state.step === 3:
+                const fourth = new App(templats.result, showCounter);
+                fourth.render();
+                break;
+
+            default:
+                console.log('что-то пошло не так');
+                break;
+        }
+    }
+
+    function showString() {
+        let input = document.querySelector('.first-scrin__user-input');
+        userScreen.textContent = genRandomString(input.value);
+
+        function genRandomString(len) {
+            let string = "";
+            let symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            for (var i = 0; i < len; i++) {
+                string += symbols.charAt(Math.floor(Math.random() * symbols.length));
+            }
+            return string;
+        }
+        state.step++;
+        checkStep();
+    }
+
+    class App {
+        constructor(template, action) {
+            this.template = template;
+            this.btnAction = action;
+        }
+
+        template;
+        render() {
+            body.removeChild(document.body.children[8]);
+            body.append(this.template.content.cloneNode(true));
+            this.subscribeBtn();
+        }
+
+        subscribeBtn() {
+            if (this.btnAction) {
+                let btn = document.querySelector('.btn');
+                btn.addEventListener('click', () => {
+                    this.btnAction();
+                })
+            }
+        }
+
+        btnAction() {}
+    }
+
+    function replaceLetter() {
+        replaceString(true)
+    }
+
+    function replaceNumber() {
+        replaceString(false)
+    }
+
+    /*
+    replaceString(boolean) 
+    true - reaplace letter
+    false - replace number
+    */
+
+    function replaceString(bool) {
+        debugger
+        console.log('Вторая функция');
+        let input = document.querySelector('.second-scrin__user-input');
+        let newString = "";
+        let i = 0
+        while (userScreen.textContent.length > i) {
+            let el = userScreen.textContent[i];
+
+            if (bool) {
+                caseLetter(el);
+            } else {
+                caseNumber(el);
+            }
+            i++;
+        }
+        userScreen.textContent = newString;
+        state.step++;
+        checkStep();
+
+        function caseLetter(item) {
+            if (!state.counters[0].name) {
+                state.counters[0] = {
+                    'name': input.value,
+                    'value': 0,
+                }
+            }
+            if (isNaN(item)) {
+                newString += input.value;
+                state.counters[0].value++;
+            } else {
+                newString += item;
+            }
+        }
+
+        function caseNumber(item) {
+            if (!state.counters[1].name) {
+                state.counters[1] = {
+                    'name': input.value,
+                    'value': 0,
+                }
+            }
+            console.log(isNaN(item));
+            if (!isNaN(item)) {
+                newString += input.value;
+                state.counters[1].value++;
+            } else {
+                newString += item;
+            }
+        }
+    }
+
+    function showCounter() {
+        let str1 = state.counters[0].name + " " + state.counters[0].value;
+        let str2 = state.counters[1].name + " " + state.counters[1].value;
+        document.querySelector('.first-value').textContent = str1;
+        document.querySelector('.second-value').textContent = str2;
+        console.log(state)
+    }
+</script>
+
+</html>
