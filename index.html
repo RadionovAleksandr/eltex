@@ -52,10 +52,6 @@
 <script type="text/javascript">
     let userScreen = document.querySelector('.screen');
     let body = document.querySelector('body');
-    let tmpl1 = document.querySelector('#first-scrin');
-    let tmpl2 = document.querySelector('#second-scrin');
-
-
     let state = {
         step: 0,
         counters: [{}, {}],
@@ -70,30 +66,24 @@
         checkStep();
     }
 
-
     function checkStep() {
-        console.log('step= ' + state.step);
         switch (true) {
             case state.step === 0:
                 const first = new App(templats.genString, showString);
                 first.render();
                 break;
-
             case state.step === 1:
                 const second = new App(templats.replaceString, replaceLetter);
                 second.render();
                 break;
-
             case state.step === 2:
                 const third = new App(templats.replaceString, replaceNumber);
                 third.render();
                 break;
-
             case state.step === 3:
                 const fourth = new App(templats.result, showCounter);
                 fourth.render();
                 break;
-
             default:
                 console.log('что-то пошло не так');
                 break;
@@ -103,6 +93,8 @@
     function showString() {
         let input = document.querySelector('.first-scrin__user-input');
         userScreen.textContent = genRandomString(input.value);
+        state.step++;
+        checkStep();
 
         function genRandomString(len) {
             let string = "";
@@ -112,8 +104,6 @@
             }
             return string;
         }
-        state.step++;
-        checkStep();
     }
 
     class App {
@@ -121,14 +111,12 @@
             this.template = template;
             this.btnAction = action;
         }
-
         template;
         render() {
             body.removeChild(document.body.children[8]);
             body.append(this.template.content.cloneNode(true));
             this.subscribeBtn();
         }
-
         subscribeBtn() {
             if (this.btnAction) {
                 let btn = document.querySelector('.btn');
@@ -137,7 +125,6 @@
                 })
             }
         }
-
         btnAction() {}
     }
 
@@ -149,25 +136,19 @@
         replaceString(false)
     }
 
-    /*
-    replaceString(boolean) 
-    true - reaplace letter
-    false - replace number
-    */
+    /* replaceString(boolean). 
+    true - reaplace letter. false - replace number */
 
     function replaceString(bool) {
-        debugger
-        console.log('Вторая функция');
         let input = document.querySelector('.second-scrin__user-input');
         let newString = "";
-        let i = 0
+        let i = 0;
         while (userScreen.textContent.length > i) {
             let el = userScreen.textContent[i];
-
             if (bool) {
-                caseLetter(el);
+                caseReplace(el, 0, bool);
             } else {
-                caseNumber(el);
+                caseReplace(el, 0, !bool);
             }
             i++;
         }
@@ -175,32 +156,16 @@
         state.step++;
         checkStep();
 
-        function caseLetter(item) {
-            if (!state.counters[0].name) {
-                state.counters[0] = {
+        function caseReplace(item, numberCounter, bool) {
+            !state.counters[numberCounter].name ?
+                state.counters[numberCounter] = {
                     'name': input.value,
                     'value': 0,
-                }
-            }
-            if (isNaN(item)) {
-                newString += input.value;
-                state.counters[0].value++;
-            } else {
-                newString += item;
-            }
-        }
+                } : false;
 
-        function caseNumber(item) {
-            if (!state.counters[1].name) {
-                state.counters[1] = {
-                    'name': input.value,
-                    'value': 0,
-                }
-            }
-            console.log(isNaN(item));
-            if (!isNaN(item)) {
+            if (isNaN(item) == bool) {
                 newString += input.value;
-                state.counters[1].value++;
+                state.counters[numberCounter].value++;
             } else {
                 newString += item;
             }
@@ -212,7 +177,7 @@
         let str2 = state.counters[1].name + " " + state.counters[1].value;
         document.querySelector('.first-value').textContent = str1;
         document.querySelector('.second-value').textContent = str2;
-        console.log(state)
+        console.log(state);
     }
 </script>
 
