@@ -117,9 +117,13 @@
 
     function showString() {
         let input = document.querySelector('input');
-        userScreen.textContent = genRandomString(input.value);
-        state.step++;
-        checkStep();
+        if (input.value > 0) {
+            userScreen.textContent = genString(input.value);
+            state.step++;
+            checkStep();
+        } else {
+            alert("Введите значение больше 0");
+        }
     }
 
     function replaceLetter() {
@@ -145,7 +149,7 @@
         console.log(state);
     }
 
-    function genRandomString(len) {
+    function genString(len) {
         let string = "";
         let symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         for (let i = 0; i < len; i++) {
