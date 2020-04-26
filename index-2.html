@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eltex</title>
+</head>
+
+<body>
+    <h1>Eltex test</h1>
+    <h2>Task:</h2>
+    <ol>
+        <li>Программа запрашивает у пользователя число N. Затем генерирует строку из случайных символов длиной N. <br>Случайные символы в данном случае - это любые символы латинского алфавита (A-Z) и цифры (0-9). Сгенерированная строка выводится на экран.
+
+        </li>
+        <li>Далее программа запрашивает у пользователя один символ. Заменяет все буквы в сгенерированной на шаге 1 строке на этот символ.
+        </li>
+        <li>Запрашивает второй символ. Заменяет все цифры в сгенерированной на шаге 2 строке на второй символ. Выводит получившуюся строку.
+        </li>
+        <li>Выводит количество повторов первого символа и количество повторов второго символа.</ol>
+    <li><i>Замечание: замену реализовать через цикл for, не через replace или подобные функции.</i></li>
+    </ol>
+    <div class="screen">
+        произвольная строка
+    </div>
+
+    <template id="first-screen">
+        <div class="first-scrin__wrap template">
+            <input class="first-scrin__user-input" type="number" min="0" placeholder="4">
+            <button class="first-scrin__btn btn">сгенерирвоать строку</button>
+        </div>
+    </template>
+
+    <template id="second-screen">
+        <div class="second-scrin__wrap template">
+            <input class="second-scrin__user-input" type="text" maxLength="1" placeholder="f">
+            <button class="second-scrin__btn btn">Заменить значение</button>
+        </div>
+    </template>
+
+    <template id="fourth-screen">
+        <div class="second-scrin__wrap template">
+            <button class="btn"> вывести количество повторов символов</button>
+            Количество повторов: <br>
+            <span class="first-value"></span>;<br> 
+            <span class="second-value"></span>.
+        </div>
+    </template>
+
+</body>
+<script type="text/javascript">
+    // Переменная которая всегда содержит текущую строку
+    let resultString = "";
+
+    function init() {
+        goToStep(1);
+    }
+
+    function goToStep(step) {
+        switch (step) {
+            case state.step === step:
+                firstStep()
+                break;
+            case state.step === step:
+                break;
+            case state.step === step:
+                break;
+            case state.step === step:
+                break;
+            default:
+                console.log('что-то пошло не так');
+                break;
+        }
+    }
+
+    function firstStep() {
+        const view = document.querySelector(".first-screen");
+        const input = document.querySelector(".first-screen input");
+        const button = document.querySelector(".first-screen button");
+
+        button.addEventListener("click", () => {
+            resultString = generateString(input.value);
+            renderString(resultString);
+            hideView(view);
+            goToStep(2);
+        });
+
+        showView(view);
+    }
+
+    function secondStep() {
+        const view = document.querySelector(".second-screen");
+        const input = document.querySelector(".second-screen input");
+        const button = document.querySelector(".second-screen button");
+
+        button.addEventListener("click", () => {
+            resultString = generateString(input.value);
+            renderString(resultString);
+            hideView(view);
+            goToStep(3);
+        });
+
+        showView(view);
+    }
+
+    function thirdStep() {
+        const view = document.querySelector(".second-screen");
+        const input = document.querySelector(".second-screen input");
+        const button = document.querySelector(".second-screen button");
+
+        button.addEventListener("click", () => {
+            resultString = generateString(input.value);
+            renderString(resultString);
+            hideView(view);
+            goToStep(4);
+        });
+    }
+
+    function fourthStep() {
+        // тоже самое что первый, второй и третий только делает это со своим блоком
+        const view = document.querySelector(".fourth-screen");
+        const input = document.querySelector(".fourth-screen input");
+        const button = document.querySelector(".fourth-screen button");
+
+        button.addEventListener("click", () => {
+            resultString = generateString(input.value);
+            renderString(resultString);
+            hideView(view);
+        });
+    }
+
+    // -----------------------------------------------------------------------------
+    // А тут уже пошли вспомогательные функции
+
+    function generateString(len) {
+        let string = "";
+        let symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        for (var i = 0; i < len; i++) {
+            string += symbols.charAt(Math.floor(Math.random() * symbols.length));
+        }
+        return string;
+    }
+
+    function replaceLetters(str, char) {
+        // получает строку и символ на который надо заменить, заменяет буквы и возвращает значение
+    }
+
+    function replaceNumbers(str, char) {
+        // получает строку и символ на который надо заменить, заменяет цифры и возвращает значение
+    }
+
+    function hideView(view) {
+        // получает блок который просто скрывает через diplay: none
+    }
+
+    function showView(view) {
+        // получает блок который показывает его через display: block
+    }
+
+    function renderString() {
+        // как только мы изменили строку мы ее рендерим в нужный блок
+        const elem = document.querySelector(".result-string");
+        elem.innerText = resultString;
+    }
+</script>
+
+</html>

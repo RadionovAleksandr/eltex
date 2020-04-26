@@ -26,25 +26,24 @@
     </div>
 
     <template id="first-screen">
-        <div class="first-scrin__wrap">
-            <input class="first-scrin__user-input" type="number" min="0" placeholder="4">
-            <button class="first-scrin__btn btn">сгенерирвоать строку</button>
+        <div class="first-screen template">
+            <input class="first-screen__user-input" type="number" min="0" placeholder="введите длину строки">
+            <button class="first-screen__btn btn">сгенерирвоать строку</button>
         </div>
     </template>
 
     <template id="second-screen">
-        <div class="second-scrin__wrap">
-            <input class="second-scrin__user-input" type="text" maxLength="1" placeholder="f">
-            <button class="second-scrin__btn btn">Заменить значение</button>
+        <div class="second-scrin template">
+            <input class="second-scrin input" type="text" maxLength="1" placeholder="введите символ">
+            <button class="second-scrin btn">Заменить значение</button>
         </div>
     </template>
 
-    <template id="fourth-screen">
-        <div class="second-scrin__wrap">
-            <button class="btn"> вывести количество повторов символов</button>
+    <template id="third-screen">
+        <div class="third-scrin template">
             Количество повторов: <br>
-            <span class="first-value"></span>;<br> 
-            <span class="second-value"></span>.
+            <span class="third-scrin first-counter"></span>;<br> 
+            <span class="third-scrin second-counter"></span>.
         </div>
     </template>
 
@@ -55,11 +54,12 @@
     let state = {
         step: 0,
         counters: [{}, {}],
+        string: "",
     }
     let templats = {
         'genString': document.querySelector('#first-screen'),
         'replaceString': document.querySelector('#second-screen'),
-        'result': document.querySelector('#fourth-screen'),
+        'result': document.querySelector('#third-screen'),
     }
 
     body.onload = function() {
@@ -67,22 +67,23 @@
     }
 
     function checkStep() {
-        switch (true) {
-            case state.step === 0:
+        switch (state.step) {
+            case 0:
                 const first = new App(templats.genString, showString);
                 first.render();
                 break;
-            case state.step === 1:
-                const second = new App(templats.replaceString, replaceLetter);
-                second.render();
+            case 1:
+                const second__letter = new App(templats.replaceString, replaceLetter);
+                second__letter.render();
                 break;
-            case state.step === 2:
-                const third = new App(templats.replaceString, replaceNumber);
+            case 2:
+                const second__number = new App(templats.replaceString, replaceNumber);
+                second__number.render();
+                break;
+            case 3:
+                const third = new App(templats.result, showCounter);
                 third.render();
-                break;
-            case state.step === 3:
-                const fourth = new App(templats.result, showCounter);
-                fourth.render();
+                third.action();
                 break;
             default:
                 console.log('что-то пошло не так');
@@ -90,71 +91,81 @@
         }
     }
 
-    function showString() {
-        let input = document.querySelector('.first-scrin__user-input');
-        userScreen.textContent = genRandomString(input.value);
-        state.step++;
-        checkStep();
-
-        function genRandomString(len) {
-            let string = "";
-            let symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            for (var i = 0; i < len; i++) {
-                string += symbols.charAt(Math.floor(Math.random() * symbols.length));
-            }
-            return string;
-        }
-    }
-
     class App {
         constructor(template, action) {
             this.template = template;
-            this.btnAction = action;
+            this.action = action;
         }
         template;
         render() {
-            body.removeChild(document.body.children[8]);
+            if (document.querySelector('.template')) {
+                body.removeChild(document.querySelector('.template'));
+            }
             body.append(this.template.content.cloneNode(true));
             this.subscribeBtn();
         }
         subscribeBtn() {
-            if (this.btnAction) {
-                let btn = document.querySelector('.btn');
+            let btn = document.querySelector('.btn');
+            if (this.action && btn) {
                 btn.addEventListener('click', () => {
-                    this.btnAction();
+                    this.action();
                 })
             }
         }
-        btnAction() {}
+        action() {};
+    }
+
+    function showString() {
+        let input = document.querySelector('input');
+        userScreen.textContent = genRandomString(input.value);
+        state.step++;
+        checkStep();
     }
 
     function replaceLetter() {
-        replaceString(true)
+        userScreen.textContent = state.string = replaceString(true, 0);
+        state.step++;
+        checkStep();
     }
 
     function replaceNumber() {
-        replaceString(false)
+        userScreen.textContent = state.string = replaceString(false, 1);
+        state.step++;
+        checkStep();
+    }
+
+    function showCounter() {
+        let i = 0;
+        while (state.string.length > i) {
+            state.counters[0].name === state.string[i] ? state.counters[0].value++ : state.counters[1].value++;
+            i++;
+        }
+        document.querySelector('.first-counter').textContent = state.counters[0].name + " " + state.counters[0].value;
+        document.querySelector('.second-counter').textContent = state.counters[1].name + " " + state.counters[1].value;
+        console.log(state);
+    }
+
+    function genRandomString(len) {
+        let string = "";
+        let symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        for (let i = 0; i < len; i++) {
+            string += symbols.charAt(Math.floor(Math.random() * symbols.length));
+        }
+        return string;
     }
 
     /* replaceString(boolean). 
     true - reaplace letter. false - replace number */
-
-    function replaceString(bool) {
-        let input = document.querySelector('.second-scrin__user-input');
+    function replaceString(bool, numberCounter) {
+        let input = document.querySelector('.input');
         let newString = "";
         let i = 0;
         while (userScreen.textContent.length > i) {
             let el = userScreen.textContent[i];
-            if (bool) {
-                caseReplace(el, 0, bool);
-            } else {
-                caseReplace(el, 0, !bool);
-            }
+            caseReplace(el, numberCounter, bool);
             i++;
         }
-        userScreen.textContent = newString;
-        state.step++;
-        checkStep();
+        return newString;
 
         function caseReplace(item, numberCounter, bool) {
             !state.counters[numberCounter].name ?
@@ -162,22 +173,8 @@
                     'name': input.value,
                     'value': 0,
                 } : false;
-
-            if (isNaN(item) == bool) {
-                newString += input.value;
-                state.counters[numberCounter].value++;
-            } else {
-                newString += item;
-            }
+            isNaN(item) == bool ? newString += input.value : newString += item;
         }
-    }
-
-    function showCounter() {
-        let str1 = state.counters[0].name + " " + state.counters[0].value;
-        let str2 = state.counters[1].name + " " + state.counters[1].value;
-        document.querySelector('.first-value').textContent = str1;
-        document.querySelector('.second-value').textContent = str2;
-        console.log(state);
     }
 </script>
 
